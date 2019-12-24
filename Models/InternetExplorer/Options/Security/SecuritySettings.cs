@@ -6,6 +6,7 @@ namespace Trustie.Models.InternetExplorer.Options.Security
 {
     public class SecuritySettings
     {
+
         #region Public Member
 
         public RegistryKey Root { get; set; }
@@ -95,54 +96,6 @@ namespace Trustie.Models.InternetExplorer.Options.Security
                     }
                 }
             }
-            //if (string.IsNullOrEmpty(site.Subdomain))
-            //{
-            //    if (rootdomainKey.ValueCount > 1 || rootdomainKey.SubKeyCount > 0)
-            //    {
-            //        string value = string.IsNullOrEmpty(site.Protocol) ? "*" : site.Protocol;
-            //        rootdomainKey.DeleteValue(value);
-            //    }
-            //    else
-            //    {
-            //        rootdomainKey.DeleteSubKey(site.Rootdomain);
-            //    }
-            //}
-            //else
-            //{
-            //    var subdomainKey = rootdomainKey.OpenSubKey(site.Subdomain, true);
-
-            //    if (rootdomainKey.SubKeyCount > 1)
-            //    {
-            //        if (string.IsNullOrEmpty(site.Protocol))
-            //        {
-            //            subdomainKey.DeleteValue("*");
-            //        }
-            //        else
-            //        {
-            //            subdomainKey.DeleteValue(site.Protocol);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        subdomainKey.DeleteSubKey(site.Subdomain);
-            //    }
-            //}
-
-            //switch (rootdomainKey.SubKeyCount)
-            //{
-            //    case 0:
-            //        rootdomainKey.DeleteSubKey(site.Rootdomain);
-            //        break;
-            //    case 1:
-            //        if (string.IsNullOrEmpty(site.Subdomain))
-            //        {
-
-            //        }
-            //        break;
-            //    default:
-            //        break;
-            //}
-
         }
 
         public List<Site> QuerySites(SecurityZone zone)
@@ -288,5 +241,6 @@ namespace Trustie.Models.InternetExplorer.Options.Security
         }
 
         #endregion
+
     }
 }
