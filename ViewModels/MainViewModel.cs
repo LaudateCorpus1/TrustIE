@@ -17,13 +17,6 @@ namespace Trustie.ViewModels
 
         #endregion
 
-
-
-
-
-
-
-
         #region Public Members
 
         public string CustomSite
@@ -50,13 +43,6 @@ namespace Trustie.ViewModels
 
         #endregion
 
-
-
-
-
-
-
-
         #region Constructor
 
         public MainViewModel()
@@ -66,13 +52,6 @@ namespace Trustie.ViewModels
         }
 
         #endregion
-
-
-
-
-
-
-
 
         #region Actions
 
@@ -106,9 +85,6 @@ namespace Trustie.ViewModels
 
         #endregion
 
-
-
-
         #region Private Methods
 
         private void AddSiteToTrusted(Site site)
@@ -131,12 +107,6 @@ namespace Trustie.ViewModels
         }
 
         #endregion
-
-
-
-
-
-
 
     }
 }
