@@ -8,11 +8,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Trustie")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Edit Trusted Zone of Internet Explorer avoiding policy settings")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Denis Ljubarets")]
 [assembly: AssemblyProduct("Trustie")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCopyright("Copyright © Denis Ljubarets @ 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
