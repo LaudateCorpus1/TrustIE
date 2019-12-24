@@ -11,7 +11,6 @@ namespace Trustie.ViewModels
         #region Private Members
 
         private readonly SecuritySettings _securitySettings;
-
         private string _customSite;
         private Site _selectedSite;
 
@@ -61,9 +60,8 @@ namespace Trustie.ViewModels
             if (eventArgs.Key == Key.Enter)
             {
                 var site = new Site(CustomSite);
-                AddSiteToTrusted(site);
-
                 CustomSite = string.Empty;
+                AddSiteToTrusted(site);
                 QueryTrustedSites();
             }
         }
@@ -73,8 +71,7 @@ namespace Trustie.ViewModels
             var eventArgs = (KeyEventArgs)context.EventArgs;
             if (eventArgs.Key == Key.Delete)
             {
-                _securitySettings.DeleteSite(SelectedSite);
-                QueryTrustedSites();
+                DeleteSite(SelectedSite);
             }
         }
 
@@ -89,8 +86,14 @@ namespace Trustie.ViewModels
 
         private void AddSiteToTrusted(Site site)
         {
-            Sites.Add(site);
             _securitySettings.AddSite(site, SecurityZone.Trusted);
+            QueryTrustedSites();
+        }
+
+        private void DeleteSite(Site site)
+        {
+            _securitySettings.DeleteSite(site);
+            QueryTrustedSites();
         }
 
         private void QueryTrustedSites()
