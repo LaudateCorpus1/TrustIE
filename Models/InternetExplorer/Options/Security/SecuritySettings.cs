@@ -9,30 +9,42 @@ namespace Trustie.Models.InternetExplorer.Options.Security
 
         #region Public Member
 
-        public RegistryKey Root { get; set; }
+        /// <summary>
+        /// Contains registry path to the current Domains key.
+        /// </summary>
+        public RegistryKey Domains { get; set; }
 
         #endregion
 
         #region Constructor
 
+        /// <summary>
+        /// The primary constructor assigns a proper Domains key to the Root.
+        /// </summary>
         public SecuritySettings()
         {
-            Root = GetDomainsKey();
+            Domains = GetDomainsKey();
         }
 
         #endregion
 
         #region Public Methods
 
-        public RegistryKey AddSite(Site site, SecurityZone zone)
+        /// <summary>
+        /// Adds a site to registry as the new registry key.
+        /// </summary>
+        /// <param name="site">Site to add</param>
+        /// <param name="zone">Site's security zone</param>
+        /// <returns>Registry path to added site</returns>
+        public RegistryKey AddSite(Site site, SecurityZone zone = SecurityZone.Trusted)
         {
             // Create root domain key in registry
-            RegistryKey rootDomain = Root.CreateSubKey(site.Rootdomain);
+            RegistryKey rootDomain = Domains.CreateSubKey(site.Rootdomain);
 
-            // Store asterix if protocol was not defined
+            // Value is asteriks if protocol is not defined
             string value = (site.Protocol.Length > 0) ? site.Protocol : "*";
 
-            // If sub domain was defined
+            // Subdomain is defined
             if (site.Subdomain.Length > 0)
             {
                 // Create subdomain key in registry
@@ -52,47 +64,46 @@ namespace Trustie.Models.InternetExplorer.Options.Security
 
         public void DeleteSite(Site site)
         {
-            var rootdomainKey = Root.OpenSubKey(site.Rootdomain, true);
-            var subdomainKey = rootdomainKey.OpenSubKey(site.Subdomain, true);
-            string value = site.HasProtocol ? site.Protocol : "*";
+            var rootkey = Domains.OpenSubKey(site.Rootdomain, true);
+            string value = site.HasProtocol ? site.Protocol : "*"; //TODO: Maybe site itself should handle asteriks as a protocol?
 
-            if (subdomainKey != null)
+            foreach (string subkeyName in rootkey.GetSubKeyNames())
             {
-                if (rootdomainKey.SubKeyCount == 1)
+                if (subkeyName.Equals(site.Subdomain))
                 {
-                    if (subdomainKey.ValueCount == 1)
+                    var subkey = rootkey.OpenSubKey(site.Subdomain, true);
+
+                    foreach (string valueName in subkey.GetValueNames())
                     {
-                        global::System.Console.WriteLine(subdomainKey);
-                        subdomainKey.DeleteSubKey(site.Subdomain);
-                    }
-                    else
-                    {
-                        subdomainKey.DeleteValue(value);
-                    }
-                }
-                else
-                {
-                    if (subdomainKey.ValueCount == 1)
-                    {
-                        subdomainKey.DeleteSubKey(site.Subdomain);
-                    }
-                    else
-                    {
-                        subdomainKey.DeleteValue(value);
+                        if (valueName.Equals(value))
+                        {
+                            if (subkey.ValueCount > 1)
+                            {
+                                subkey.DeleteValue(valueName);
+                            }
+                            else
+                            {
+                                rootkey.DeleteSubKey(site.Subdomain);
+                            }
+                        }
                     }
                 }
             }
-            else
+
+            if (rootkey.SubKeyCount == 0 || !site.HasSubdomain)
             {
-                if (rootdomainKey.SubKeyCount == 0)
+                foreach (string valueName in rootkey.GetValueNames())
                 {
-                    if (rootdomainKey.ValueCount == 1)
+                    if (valueName.Equals(value))
                     {
-                        rootdomainKey.DeleteSubKey(site.Rootdomain);
-                    }
-                    else
-                    {
-                        rootdomainKey.DeleteValue(value);
+                        if (rootkey.ValueCount > 1 || !site.HasSubdomain)
+                        {
+                            rootkey.DeleteValue(valueName);
+                        }
+                        else
+                        {
+                            Domains.DeleteSubKey(site.Rootdomain);
+                        }
                     }
                 }
             }
@@ -104,10 +115,10 @@ namespace Trustie.Models.InternetExplorer.Options.Security
             List<Site> sites = new List<Site>();
 
             // Each subkey contains a root domain's name
-            foreach (var rootDomain in Root.GetSubKeyNames())
+            foreach (var rootDomain in Domains.GetSubKeyNames())
             {
                 // Define a root domain key
-                RegistryKey rootDomainKey = Root.OpenSubKey(rootDomain);
+                RegistryKey rootDomainKey = Domains.OpenSubKey(rootDomain);
 
                 // Extract value names based on a security zone
                 List<string> rootDomainValueNames = this.QueryValueNames(rootDomainKey, zone);
