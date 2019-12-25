@@ -4,7 +4,7 @@ TrustIE allows to edit Internet Explorer's trusted sites zone while avoiding sec
 <br>
 <br>
 <p align="center">
-  <img src="Files/MainView.png">
+  <img src="Files/MainView.png">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img align="top" src="Files/IE.png">
 </p>
 
