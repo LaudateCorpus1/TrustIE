@@ -11,24 +11,24 @@ namespace Trustie.ViewModels
         #region Private Members
 
         private readonly SecuritySettings _securitySettings;
-        private string _customSite;
+        private string _customSiteTextBox;
         private Site _selectedSite;
 
         #endregion
 
         #region Public Members
 
-        public string CustomSite
+        public string CustomSiteTextBox
         {
-            get { return _customSite; }
+            get { return _customSiteTextBox; }
             set
             {
-                _customSite = value;
-                NotifyOfPropertyChange(() => CustomSite);
+                _customSiteTextBox = value;
+                NotifyOfPropertyChange(() => CustomSiteTextBox);
             }
         }
 
-        public BindableCollection<Site> Sites { get; set; } = new BindableCollection<Site>();
+        public BindableCollection<Site> SitesListBox { get; set; } = new BindableCollection<Site>();
 
         public Site SelectedSite
         {
@@ -59,8 +59,8 @@ namespace Trustie.ViewModels
             var eventArgs = (KeyEventArgs)context.EventArgs;
             if (eventArgs.Key == Key.Enter)
             {
-                var site = new Site(CustomSite);
-                CustomSite = string.Empty;
+                var site = new Site(CustomSiteTextBox);
+                CustomSiteTextBox = string.Empty;
                 AddSiteToTrusted(site);
                 QueryTrustedSites();
             }
@@ -101,11 +101,11 @@ namespace Trustie.ViewModels
             var trustedSites = _securitySettings.QuerySites(SecurityZone.Trusted);
 
             trustedSites.Sort();
-            Sites.Clear();
+            SitesListBox.Clear();
 
             foreach (var site in trustedSites)
             {
-                Sites.Add(site);
+                SitesListBox.Add(site);
             }
         }
 

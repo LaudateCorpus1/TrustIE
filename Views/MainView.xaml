@@ -7,24 +7,37 @@
 
     <Grid Margin="15">
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="3"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Add sites to Trusted Zone:" Foreground="White" VerticalAlignment="Center"/>
+        <TextBlock x:Name="LabelTextBlock" Text="Add sites to Trusted Zone:" Margin="5,0" VerticalAlignment="Center"/>
 
-        <TextBox x:Name="CustomSite" Grid.Row="1" Height="22" VerticalContentAlignment="Center" Padding="4,0"
+        <TextBox x:Name="CustomSiteTextBox" Grid.Row="1" Height="22" VerticalContentAlignment="Center" Padding="4,0"
                  cal:Message.Attach="[Event KeyUp]=[Action CustomSite_KeyUp($executionContext)]"/>
 
-        <ListBox x:Name="Sites" Grid.Row="3" Padding="4,2"
+        <ListBox x:Name="SitesListBox" Grid.Row="3" Padding="4,2"
                  SelectedItem="{Binding Path=SelectedSite, Mode=OneWayToSource}"
                  DisplayMemberPath="Url"
                  cal:Message.Attach="[Event KeyUp]=[Action Sites_KeyUp($executionContext)]"/>
 
-        <Button x:Name="Close" Grid.Row="5" Width="80" Height="25" 
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Vertical">
+                <RadioButton Content="Internet Explorer" Height="20" IsChecked="True"/>
+                <RadioButton Content="Java Security" Height="20"/>
+            </StackPanel>
+
+            <Button x:Name="CloseButton" Grid.Column="1" Width="80" Height="25" 
                 VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Close"/>
+        </Grid>
     </Grid>
 </Window>
