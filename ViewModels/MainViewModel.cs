@@ -1,7 +1,10 @@
 ﻿using Caliburn.Micro;
-using System.Security;
+using System;
 using System.Windows.Input;
-using Trustie.Models.InternetExplorer.Options.Security;
+using System.Windows.Media;
+using Trustie.Models.Interfaces;
+using Trustie.Models.InternetExplorer;
+using Trustie.Models.Java.Security;
 
 namespace Trustie.ViewModels
 {
@@ -10,27 +13,42 @@ namespace Trustie.ViewModels
 
         #region Private Members
 
-        private readonly SecuritySettings _securitySettings;
-        private string _customSiteTextBox;
-        private Site _selectedSite;
+        private ISecuritySettings _securitySettings;
+        private string _label;
+        private string _site;
+        private string _selectedSite;
+        private bool _internetExplorer;
+        private bool _javaSecurity;
+        private bool _javaSecurityEnabled;
+        private Brush _siteTextBoxColor = Brushes.Black;
 
         #endregion
 
         #region Public Members
 
-        public string CustomSiteTextBox
+        public string Label
         {
-            get { return _customSiteTextBox; }
+            get { return _label; }
             set
             {
-                _customSiteTextBox = value;
-                NotifyOfPropertyChange(() => CustomSiteTextBox);
+                _label = value;
+                NotifyOfPropertyChange(() => Label);
             }
         }
 
-        public BindableCollection<Site> SitesListBox { get; set; } = new BindableCollection<Site>();
+        public string Site
+        {
+            get { return _site; }
+            set
+            {
+                _site = value;
+                NotifyOfPropertyChange(() => Site);
+            }
+        }
 
-        public Site SelectedSite
+        public BindableCollection<string> Sites { get; set; } = new BindableCollection<string>();
+
+        public string SelectedSite
         {
             get { return _selectedSite; }
             set
@@ -40,73 +58,164 @@ namespace Trustie.ViewModels
             }
         }
 
+        public bool InternetExplorer
+        {
+            get { return _internetExplorer; }
+            set
+            {
+                if (value.Equals(_internetExplorer)) return;
+                _internetExplorer = value;
+                NotifyOfPropertyChange(() => InternetExplorer);
+                RadioButtonChecked();
+            }
+        }
+
+        public bool JavaSecurity
+        {
+            get { return _javaSecurity; }
+            set
+            {
+                if (value.Equals(_javaSecurity)) return;
+                _javaSecurity = value;
+                NotifyOfPropertyChange(() => JavaSecurity);
+                RadioButtonChecked();
+            }
+        }
+
+        public bool JavaSecurityEnabled
+        {
+            get { return _javaSecurityEnabled; }
+            set
+            {
+                _javaSecurityEnabled = value;
+                NotifyOfPropertyChange(() => JavaSecurityEnabled);
+            }
+        }
+
+        public Brush SiteTextBoxColor
+        {
+            get { return _siteTextBoxColor; }
+            set
+            {
+                _siteTextBoxColor = value;
+                NotifyOfPropertyChange(() => SiteTextBoxColor);
+            }
+        }
+
         #endregion
 
         #region Constructor
 
         public MainViewModel()
         {
-            _securitySettings = new SecuritySettings();
-            QueryTrustedSites();
+            InternetExplorer = true;
+            JavaSecurityEnabled = JavaSettings.JavaInstalled;
         }
 
         #endregion
 
         #region Actions
-
-        public void CustomSite_KeyUp(ActionExecutionContext context)
+        public void SiteTextBox_KeyUp(ActionExecutionContext context)
         {
+            SiteTextBoxColor = Brushes.Black;
+
             var eventArgs = (KeyEventArgs)context.EventArgs;
             if (eventArgs.Key == Key.Enter)
             {
-                var site = new Site(CustomSiteTextBox);
-                CustomSiteTextBox = string.Empty;
-                AddSiteToTrusted(site);
-                QueryTrustedSites();
+                if (IsWellFormedUriString())
+                {
+                    AddSite(Site);
+                    QuerySites();
+                    Site = string.Empty;
+                }
+                else
+                {
+                    SiteTextBoxColor = Brushes.Red;
+                }
             }
         }
 
-        public void Sites_KeyUp(ActionExecutionContext context)
+        public void SitesListBox_KeyUp(ActionExecutionContext context)
         {
             var eventArgs = (KeyEventArgs)context.EventArgs;
             if (eventArgs.Key == Key.Delete)
             {
                 DeleteSite(SelectedSite);
+                QuerySites();
             }
         }
 
         public void Close()
         {
-            System.Environment.Exit(0);
+            Environment.Exit(0);
         }
 
         #endregion
 
         #region Private Methods
 
-        private void AddSiteToTrusted(Site site)
+        private void QuerySites()
         {
-            _securitySettings.AddSite(site, SecurityZone.Trusted);
-            QueryTrustedSites();
-        }
+            var trustedSites = _securitySettings.QuerySites();
 
-        private void DeleteSite(Site site)
-        {
-            _securitySettings.DeleteSite(site);
-            QueryTrustedSites();
-        }
-
-        private void QueryTrustedSites()
-        {
-            var trustedSites = _securitySettings.QuerySites(SecurityZone.Trusted);
-
-            trustedSites.Sort();
-            SitesListBox.Clear();
+            Sites.Clear();
 
             foreach (var site in trustedSites)
             {
-                SitesListBox.Add(site);
+                Sites.Add(site);
             }
+        }
+
+        private void AddSite(string site)
+        {
+            _securitySettings.AddSite(site);
+        }
+
+        private void DeleteSite(string site)
+        {
+            _securitySettings.DeleteSite(site);
+        }
+
+        private void RadioButtonChecked()
+        {
+            if (InternetExplorer)
+            {
+                _securitySettings = new IESettings();
+                Label = "Add site to Trusted zone:";
+                
+            }
+            if (JavaSecurity)
+            {
+                _securitySettings = new JavaSettings();
+                Label = "Add site to Exceptions:";
+            }
+
+            QuerySites();
+        }
+
+        /// <summary>
+        /// Checks if a given string is a well formed URI.
+        /// </summary>
+        /// <returns></returns>
+        private bool IsWellFormedUriString()
+        {
+            string[] asteriksCases = { "http://*.", "https://*.", "*." };
+
+            // Ignore asteriks at the beginning of the url
+            // by removing it before check starts.
+            foreach (string allowedCase in asteriksCases)
+            {
+                if (Site.StartsWith(allowedCase))
+                {
+                    int asterixIndex = Site.IndexOf("*");
+                    Site = Site.Remove(asterixIndex, 2);
+                }
+            }
+
+            // Should contain at least one dot
+            if (!Site.Contains(".")) return false;
+
+            return Uri.IsWellFormedUriString(Site, UriKind.RelativeOrAbsolute);
         }
 
         #endregion

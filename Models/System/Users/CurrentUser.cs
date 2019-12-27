@@ -3,7 +3,7 @@ using System.IO;
 using System.Management;
 using System.Security.Principal;
 
-namespace Trustie.Models.System.Users.Queries
+namespace Trustie.Models.System.Users
 {
     public static class CurrentUser
     {

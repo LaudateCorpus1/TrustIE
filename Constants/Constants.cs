@@ -23,6 +23,28 @@ namespace Trustie
                     public static readonly string Policies = InternetSettings.Policies + @"ZoneMap\Domains\";
                 }
             }
+
+            public static class JavaRuntimeEnvironment
+            {
+                public static readonly string Default = @"Software\JavaSoft\Java Runtime Environment\";
+            }
+        }
+
+        public static class Paths
+        {
+            public static class Java
+            {
+                public static readonly string Security = @"AppData\LocalLow\Sun\Java\Deployment\security\";
+                
+            }
+        }
+
+        public static class Files
+        {
+            public static class Java
+            {
+                public static readonly string ExceptionSites = Paths.Java.Security + "exception.sites";
+            }
         }
 
         public static class Application
