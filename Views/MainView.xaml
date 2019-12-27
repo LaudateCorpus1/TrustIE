@@ -1,30 +1,42 @@
 ﻿<Window x:Class="Trustie.Views.MainView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="clr-namespace:Trustie.Views" mc:Ignorable="d"
         xmlns:cal="http://www.caliburnproject.org"
         Title="TrustIE v1.0a"
-        FocusManager.FocusedElement="{Binding ElementName=CustomSite}"
+        FocusManager.FocusedElement="{Binding ElementName=Site}"
         Height="400" Width="250" MinHeight="200" MaxHeight="800" MaxWidth="300" MinWidth="200" ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen" Background="#67A79E">
 
     <Grid Margin="15">
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="3"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Add sites to Trusted Zone:" Foreground="White" VerticalAlignment="Center"/>
+        <TextBlock x:Name="Label" Text="Add sites to Trusted zone:" Margin="5,0" VerticalAlignment="Center"/>
 
-        <TextBox x:Name="CustomSite" Grid.Row="1" Height="22" VerticalContentAlignment="Center" Padding="4,0"
-                 cal:Message.Attach="[Event KeyUp]=[Action CustomSite_KeyUp($executionContext)]"/>
+        <TextBox x:Name="Site" Grid.Row="1" Height="22" VerticalContentAlignment="Center" Padding="4,0"
+                 cal:Message.Attach="[Event KeyUp]=[Action SiteTextBox_KeyUp($executionContext)]" Foreground="{Binding SiteTextBoxColor}"/>
 
         <ListBox x:Name="Sites" Grid.Row="3" Padding="4,2"
                  SelectedItem="{Binding Path=SelectedSite, Mode=OneWayToSource}"
-                 DisplayMemberPath="Url"
-                 cal:Message.Attach="[Event KeyUp]=[Action Sites_KeyUp($executionContext)]"/>
+                 cal:Message.Attach="[Event KeyUp]=[Action SitesListBox_KeyUp($executionContext)]"/>
 
-        <Button x:Name="Close" Grid.Row="5" Width="80" Height="25" 
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Vertical">
+                <RadioButton Name="InternetExplorer" Content="Internet Explorer" Height="20"/>
+                <RadioButton Name="JavaSecurity" Content="Java Security" Height="20"/>
+            </StackPanel>
+
+            <Button x:Name="Close" Grid.Column="1" Width="80" Height="25" 
                 VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Close"/>
+        </Grid>
     </Grid>
 </Window>
