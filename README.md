@@ -1,7 +1,6 @@
 # TrustIE
 <br>
-TrustIE allows to edit Internet Explorer's trusted sites zone while avoiding security policies.<br>
-TrustIE also allows to adjust Java Exceptions. Requires admin rights.<br>
+TrustIE allows to edit Trusted Sites zone while avoiding security policies. Also allows to edit Java Exceptions. Requires admin rights.<br>
 <br>
 <a href="https://github.com/DenisLjubarets/TrustIE/raw/master/Files/Trustie.zip"><b>>> Download <<</b></a><br>
 <br>
