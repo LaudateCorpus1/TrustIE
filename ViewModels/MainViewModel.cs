@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using System;
+using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
 using Trustie.Models.Interfaces;
@@ -212,8 +213,8 @@ namespace Trustie.ViewModels
                 }
             }
 
-            // Should contain at least one dot
-            if (!Site.Contains(".")) return false;
+            // Should contain at least one dot, but not as a last character
+            if (!Site.Contains(".") || (Site.Last().Equals('.') && Site.Count(c => c == '.') == 1)) return false;
 
             return Uri.IsWellFormedUriString(Site, UriKind.RelativeOrAbsolute);
         }
