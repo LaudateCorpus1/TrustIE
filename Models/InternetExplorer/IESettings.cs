@@ -27,7 +27,7 @@ namespace Trustie.Models.InternetExplorer
         #region Constructor
 
         /// <summary>
-        /// The primary constructor assigns a proper Domains key to the Root.
+        /// The primary constructor assigns a proper Domains key.
         /// </summary>
         public IESettings()
         {
@@ -47,23 +47,17 @@ namespace Trustie.Models.InternetExplorer
             var site = new Site(s);
 
             // Create rootdomain key in registry
-            var rootDomain = Domains.CreateSubKey(site.RootDomain);
+            var key = Domains.CreateSubKey(site.RootDomain);
 
-            // Subdomain is not defined
-            if (string.IsNullOrEmpty(site.SubDomain))
-            {
-                // Set value for a given zone to rootdomain
-                rootDomain.SetValue(site.Protocol, (int)SecurityZone);
-            }
             // Subdomain is defined
-            else
+            if (!string.IsNullOrEmpty(site.SubDomain))
             {
                 // Create subdomain key in registry
-                var subDomain = rootDomain.CreateSubKey(site.SubDomain);
-
-                // Set value for a given zone to subdomain
-                subDomain.SetValue(site.Protocol, (int)SecurityZone);
+                key = key.CreateSubKey(site.SubDomain);
             }
+
+            // Create protocol value and set it to security zone
+            key.SetValue(site.Protocol, (int)SecurityZone);
         }
 
         /// <summary>
@@ -138,7 +132,7 @@ namespace Trustie.Models.InternetExplorer
                 // If there are no value names, then urls should be formed with subdomains
                 foreach (var valueName in rootDomainValueNames)
                 {
-                    // Each url is formed depending on either it contains an asterix or a protocol
+                    // Each site is formed depending on either it contains an asterix or a protocol
                     string site;
                     if (valueName.Equals("*"))
                     {
@@ -166,7 +160,7 @@ namespace Trustie.Models.InternetExplorer
                     // Each value name forms a new site to be added to the list
                     foreach (var valueName in subDomainValueNames)
                     {
-                        // Each url is formed depending on either it contains an asterix or a protocol
+                        // Each site is formed depending on either it contains an asterix or a protocol
                         string site;
                         if (valueName.Equals("*"))
                         {
