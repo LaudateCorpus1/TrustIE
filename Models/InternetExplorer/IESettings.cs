@@ -74,12 +74,14 @@ namespace Trustie.Models.InternetExplorer
         {
             var site = new Site(s);
 
+            // Set rootkey to Domains, and subkey to rootdomain key.
             var rootkey = Domains;
             var subkey = Domains.OpenSubKey(site.RootDomain, true);
 
             // RootDomain was not found in registry, abort
             if (subkey == null) return;
 
+            // If subdomain is defined then change rootkey to rootdomain key, and subkey to subdomain key
             if (!string.IsNullOrEmpty(site.SubDomain))
             {
                 rootkey = subkey;
@@ -114,6 +116,10 @@ namespace Trustie.Models.InternetExplorer
             }
         }
 
+        /// <summary>
+        /// Queries registry for sites. Composes keys, subkeys and their values to rootdomains, subdomains and protocols.
+        /// </summary>
+        /// <returns>Array if site strings</returns>
         public string[] QuerySites()
         {
             // Define a list of sites
@@ -132,9 +138,8 @@ namespace Trustie.Models.InternetExplorer
                 // If there are no value names, then urls should be formed with subdomains
                 foreach (var valueName in rootDomainValueNames)
                 {
-                    string site = string.Empty;
-
                     // Each url is formed depending on either it contains an asterix or a protocol
+                    string site;
                     if (valueName.Equals("*"))
                     {
                         // Root domain url is formed with an asteriks
@@ -161,8 +166,8 @@ namespace Trustie.Models.InternetExplorer
                     // Each value name forms a new site to be added to the list
                     foreach (var valueName in subDomainValueNames)
                     {
-                        string site = string.Empty;
                         // Each url is formed depending on either it contains an asterix or a protocol
+                        string site;
                         if (valueName.Equals("*"))
                         {
                             site = $"{subDomain}.{rootDomain}";
@@ -185,6 +190,11 @@ namespace Trustie.Models.InternetExplorer
 
         #region Private Methods
 
+        /// <summary>
+        /// Queries value names of a given registry key.
+        /// </summary>
+        /// <param name="key">Key with values</param>
+        /// <returns>List of value names</returns>
         private List<string> QueryValueNames(RegistryKey key)
         {
             var valueNames = new List<string>();
@@ -205,8 +215,13 @@ namespace Trustie.Models.InternetExplorer
             return valueNames;
         }
 
+        /// <summary>
+        /// Seaches registry for Domains key that contains sites.
+        /// </summary>
+        /// <returns>Domains registry key</returns>
         private RegistryKey GetDomainsKey()
         {
+            // List of known places that can hold Domains key.
             var keys = new List<RegistryKey>
             {
                 Registry.LocalMachine.OpenSubKey(Constants.Registry.InternetSettings.Policies),
@@ -214,17 +229,23 @@ namespace Trustie.Models.InternetExplorer
                 Registry.CurrentUser.OpenSubKey(Constants.Registry.InternetSettings.Policies)
             };
 
+            // Each key from the list..
             foreach (RegistryKey key in keys)
             {
+                // ..that is not null and..
                 if (key != null)
                 {
+                    // ..that key has a value that..
                     foreach (string valueName in key.GetValueNames())
                     {
+                        // ..corresponds to Site to Zone Assignment policy and..
                         if (valueName.Equals(Constants.Registry.InternetSettings.SiteToZoneAssignmentList.ValueName))
                         {
+                            // ..the policy is enabled..
                             int value = (int)key.GetValue(valueName);
                             if (value == Constants.Registry.InternetSettings.SiteToZoneAssignmentList.Value)
                             {
+                                // ..and subkeys are not null, then return this registry key.
                                 var result = key.OpenSubKey("ZoneMap");
                                 if (result != null) result = result.OpenSubKey("Domains", true);
                                 if (result != null) return result;
@@ -234,6 +255,7 @@ namespace Trustie.Models.InternetExplorer
                 }
             }
 
+            // Return default registry key
             return Registry.CurrentUser.OpenSubKey(Constants.Registry.InternetSettings.Domains.Default, true);
         }
 
@@ -309,5 +331,6 @@ namespace Trustie.Models.InternetExplorer
         }
 
         #endregion
+
     }
 }

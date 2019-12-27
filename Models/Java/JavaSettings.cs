@@ -7,6 +7,12 @@ namespace Trustie.Models.Java.Security
 {
     public class JavaSettings : ISecuritySettings
     {
+
+        #region Public Members
+
+        /// <summary>
+        /// Java is installed
+        /// </summary>
         public static bool JavaInstalled 
         { 
             get 
@@ -15,6 +21,9 @@ namespace Trustie.Models.Java.Security
             } 
         }
 
+        /// <summary>
+        /// Java installation path 
+        /// </summary>
         public static string InstallPath
         {
             get
@@ -32,16 +41,25 @@ namespace Trustie.Models.Java.Security
             }
         }
 
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Queries sites in Java Exceptions.
+        /// </summary>
+        /// <returns>Array of sites</returns>
         public string[] QuerySites()
         {
             string file = $@"C:\Users\{System.Users.CurrentUser.Name}\{Constants.Files.Java.ExceptionSites}";
-            if (!File.Exists(file))
-            {
-                return null;
-            }
+            if (!File.Exists(file)) return null;
             return File.ReadAllLines(file);
         }
 
+        /// <summary>
+        /// Adds site to Java Exceptions.
+        /// </summary>
+        /// <param name="site">Site to add</param>
         public void AddSite(string site)
         {
             string file = $@"C:\Users\{System.Users.CurrentUser.Name}\{Constants.Files.Java.ExceptionSites}";
@@ -53,6 +71,10 @@ namespace Trustie.Models.Java.Security
             }
         }
 
+        /// <summary>
+        /// Removes site from Java Exceptions.
+        /// </summary>
+        /// <param name="site">Site to delete</param>
         public void DeleteSite(string site)
         {
             string file = $@"C:\Users\{System.Users.CurrentUser.Name}\{Constants.Files.Java.ExceptionSites}";
@@ -66,6 +88,8 @@ namespace Trustie.Models.Java.Security
             File.Delete(file);
             File.Move(tempFile, file);
         }
+
+        #endregion
 
     }
 }

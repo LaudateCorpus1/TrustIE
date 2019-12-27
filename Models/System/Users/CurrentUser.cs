@@ -7,6 +7,9 @@ namespace Trustie.Models.System.Users
 {
     public static class CurrentUser
     {
+
+        #region Public Members
+
         public static string Name
         {
             get
@@ -23,6 +26,15 @@ namespace Trustie.Models.System.Users
             }
         }
 
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Gets current user name. Method checks owner of currently 
+        /// running explorer.exe isntance. That owner is considered to be a current user.
+        /// </summary>
+        /// <returns>Current user name</returns>
         private static string CurrentUserName()
         {
             SelectQuery query = new SelectQuery(@"Select * from Win32_Process");
@@ -43,6 +55,10 @@ namespace Trustie.Models.System.Users
             return string.Empty;
         }
 
+        /// <summary>
+        /// Gets SID of current user.
+        /// </summary>
+        /// <returns>Current user SID</returns>
         private static string CurrentUserSID()
         {
             string name = CurrentUserName();
@@ -50,5 +66,7 @@ namespace Trustie.Models.System.Users
             SecurityIdentifier sid = (SecurityIdentifier)account.Translate(typeof(SecurityIdentifier));
             return sid.ToString();
         }
+
+        #endregion
     }
 }

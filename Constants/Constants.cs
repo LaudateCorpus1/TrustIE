@@ -4,6 +4,15 @@ namespace Trustie
 {
     public static class Constants
     {
+        public static class Text
+        {
+            public static class Label
+            {
+                public static readonly string InternetExplorer = "Add site to Trusted zone:";
+                public static readonly string JavaSecurity = "Add site to Exceptions:";
+            }
+        }
+
         public static class Registry
         {
             public static class InternetSettings

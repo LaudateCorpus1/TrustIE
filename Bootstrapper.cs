@@ -10,9 +10,17 @@ namespace Trustie
         {
             Initialize();
 
+            // Add IsEnabled convention for IsEnabledPropery of the UIElement
             AddConvention(UIElement.IsEnabledProperty, "IsEnabled", "IsEnabledChanged", "Enabled");
         }
 
+        /// <summary>
+        /// Add an element convention to a property in Caliburn.Micro.
+        /// </summary>
+        /// <param name="dependencyProperty">Element property</param>
+        /// <param name="parameterProperty">The default property of action parameters.</param>
+        /// <param name="eventName">The default event to trigger actions.</param>
+        /// <param name="name">String to append to a property name.</param>
         private void AddConvention(DependencyProperty dependencyProperty, string parameterProperty, string eventName, string name)
         {
             ConventionManager.AddElementConvention<FrameworkElement>(dependencyProperty, parameterProperty, eventName);

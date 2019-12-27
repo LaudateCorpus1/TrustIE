@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -27,6 +28,9 @@ namespace Trustie.ViewModels
 
         #region Public Members
 
+        /// <summary>
+        /// Label on top of TextBox.
+        /// </summary>
         public string Label
         {
             get { return _label; }
@@ -37,6 +41,9 @@ namespace Trustie.ViewModels
             }
         }
 
+        /// <summary>
+        /// Site TextBox.
+        /// </summary>
         public string Site
         {
             get { return _site; }
@@ -47,8 +54,14 @@ namespace Trustie.ViewModels
             }
         }
 
+        /// <summary>
+        /// Sites ListBox.
+        /// </summary>
         public BindableCollection<string> Sites { get; set; } = new BindableCollection<string>();
 
+        /// <summary>
+        /// Selected site in Sites list.
+        /// </summary>
         public string SelectedSite
         {
             get { return _selectedSite; }
@@ -59,6 +72,9 @@ namespace Trustie.ViewModels
             }
         }
 
+        /// <summary>
+        /// InternetExplorer checkbox.
+        /// </summary>
         public bool InternetExplorer
         {
             get { return _internetExplorer; }
@@ -71,6 +87,9 @@ namespace Trustie.ViewModels
             }
         }
 
+        /// <summary>
+        /// JavaSecurity checkbox.
+        /// </summary>
         public bool JavaSecurity
         {
             get { return _javaSecurity; }
@@ -83,6 +102,9 @@ namespace Trustie.ViewModels
             }
         }
 
+        /// <summary>
+        /// Enables or disables JavaSecurity checkbox.
+        /// </summary>
         public bool JavaSecurityEnabled
         {
             get { return _javaSecurityEnabled; }
@@ -93,6 +115,9 @@ namespace Trustie.ViewModels
             }
         }
 
+        /// <summary>
+        /// Color brush for TextBox where user enters site.
+        /// </summary>
         public Brush SiteTextBoxColor
         {
             get { return _siteTextBoxColor; }
@@ -107,6 +132,10 @@ namespace Trustie.ViewModels
 
         #region Constructor
 
+        /// <summary>
+        /// Default constructor. Sets InternetExplorer checkbox. 
+        /// Disables JavaSecurity checkbox if Java is not installed.
+        /// </summary>
         public MainViewModel()
         {
             InternetExplorer = true;
@@ -116,6 +145,11 @@ namespace Trustie.ViewModels
         #endregion
 
         #region Actions
+
+        /// <summary>
+        /// User pressed Enter key on Site TextBox to add site to security settings.
+        /// </summary>
+        /// <param name="context">The context used during the exectuion</param>
         public void SiteTextBox_KeyUp(ActionExecutionContext context)
         {
             SiteTextBoxColor = Brushes.Black;
@@ -136,6 +170,10 @@ namespace Trustie.ViewModels
             }
         }
 
+        /// <summary>
+        /// User pressed Delete key on SelectedSite to remove site from security settings.
+        /// </summary>
+        /// <param name="context">The context used during the exectuion</param>
         public void SitesListBox_KeyUp(ActionExecutionContext context)
         {
             var eventArgs = (KeyEventArgs)context.EventArgs;
@@ -146,6 +184,9 @@ namespace Trustie.ViewModels
             }
         }
 
+        /// <summary>
+        /// Closes TrustIE
+        /// </summary>
         public void Close()
         {
             Environment.Exit(0);
@@ -155,40 +196,53 @@ namespace Trustie.ViewModels
 
         #region Private Methods
 
+        /// <summary>
+        /// Queries sites and updates Sites list
+        /// </summary>
         private void QuerySites()
         {
-            var trustedSites = _securitySettings.QuerySites();
-
             Sites.Clear();
 
-            foreach (var site in trustedSites)
+            var sites = _securitySettings.QuerySites();
+            foreach (var site in sites)
             {
                 Sites.Add(site);
             }
         }
 
+        /// <summary>
+        /// Adds site to security settings
+        /// </summary>
+        /// <param name="site">Site to add</param>
         private void AddSite(string site)
         {
             _securitySettings.AddSite(site);
         }
 
+        /// <summary>
+        /// Deletes site from security settings
+        /// </summary>
+        /// <param name="site">Site to delete</param>
         private void DeleteSite(string site)
         {
             _securitySettings.DeleteSite(site);
         }
 
+        /// <summary>
+        /// Changes label text, initializes ISecuritySettings and queries it for sites.
+        /// </summary>
         private void RadioButtonChecked()
         {
             if (InternetExplorer)
             {
                 _securitySettings = new IESettings();
-                Label = "Add site to Trusted zone:";
+                Label = Constants.Text.Label.InternetExplorer;
                 
             }
             if (JavaSecurity)
             {
                 _securitySettings = new JavaSettings();
-                Label = "Add site to Exceptions:";
+                Label = Constants.Text.Label.JavaSecurity;
             }
 
             QuerySites();
