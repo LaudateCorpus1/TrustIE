@@ -77,7 +77,7 @@ namespace Trustie.Models.InternetExplorer
             var rootkey = Domains;
             var subkey = Domains.OpenSubKey(site.RootDomain, true);
 
-            // RootDomain was not found in registry, abort.
+            // RootDomain was not found in registry, abort
             if (subkey == null) return;
 
             if (!string.IsNullOrEmpty(site.SubDomain))
@@ -85,105 +85,34 @@ namespace Trustie.Models.InternetExplorer
                 rootkey = subkey;
                 subkey = rootkey.OpenSubKey(site.SubDomain, true);
 
-                // SubDomain was not found in registry, abort.
+                // SubDomain was not found in registry, abort
                 if (subkey == null) return;
             }
 
-            // Protocol was not found among values, abort.
+            // Protocol was not found among values, abort
             if (!subkey.GetValueNames().Contains(site.Protocol)) return;
 
-            // If subdomain has more than one protocol
-            if (subkey.ValueCount > 1)
+            // If subkey has more than one value, or if site doesn't contain a subdomain
+            if (subkey.ValueCount > 1 || string.IsNullOrEmpty(site.SubDomain))
             {
-                // Delete only subdomain's protocol
+                // Delete only value
                 subkey.DeleteValue(site.Protocol);
             }
+            // Or if subkey doesn't contain any subkeys
             else if (subkey.SubKeyCount == 0)
             {
-                // Delete subkey. There are no subkeys and it contains only one value.
+                // Delete subkey. There are no subkeys and it contains only one value
                 string name = subkey.Name.Split('\\').Last();
                 rootkey.DeleteSubKey(name);
             }
 
+            // Delete empty rootdomain key
+            rootkey = Domains.OpenSubKey(site.RootDomain, true);
+            if (rootkey.SubKeyCount == 0 && rootkey.ValueCount == 0)
+            {
+                Domains.DeleteSubKey(site.RootDomain);
+            }
         }
-            //// Check each value name and compare it to protocol
-            //foreach (string valueName in subkey.GetValueNames())
-            //{
-            //    // If the value name equals to the protocol
-            //    if (valueName.Equals(site.Protocol))
-            //    {
-            //        // If subdomain has more than one protocol
-            //        if (subkey.ValueCount > 1)
-            //        {
-            //            // Delete only subdomain's protocol
-            //            subkey.DeleteValue(valueName);
-            //        }
-            //        else
-            //        {
-            //            // Delete the rootkey. There are no subkeys and it contains only one value.
-            //            rootkey.DeleteSubKey(site.SubDomain);
-            //        }
-            //    }
-            //}
-
-            //// Open rootdomain key
-            //var rootkey = Domains.OpenSubKey(site.RootDomain, true);
-
-            //// Check each subkey name and compare it's name to the subdomain name
-            //foreach (string subkeyName in rootkey.GetSubKeyNames())
-            //{
-            //    // If subkey name is the same as the subdomain name
-            //    if (subkeyName.Equals(site.SubDomain))
-            //    {
-            //        // Open subdomain key
-            //        var subkey = rootkey.OpenSubKey(site.SubDomain, true);
-
-            //        // Check each value name and compare it to protocol
-            //        foreach (string valueName in subkey.GetValueNames())
-            //        {
-            //            // If the value name equals to the protocol
-            //            if (valueName.Equals(site.Protocol))
-            //            {
-            //                // If subdomain has more than one protocol
-            //                if (subkey.ValueCount > 1)
-            //                {
-            //                    // Delete only subdomain's protocol
-            //                    subkey.DeleteValue(valueName);
-            //                }
-            //                else
-            //                {
-            //                    // Delete subdomain key
-            //                    rootkey.DeleteSubKey(site.SubDomain);
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
-            //// If the rootkey now contains a zero subdomains, or if the site has no subdomains
-            //if (rootkey.SubKeyCount == 0 || string.IsNullOrEmpty(site.SubDomain))
-            //{
-            //    // Check each value name of the rootkey
-            //    foreach (string valueName in rootkey.GetValueNames())
-            //    {
-            //        // If the value name equals to the protocol
-            //        if (valueName.Equals(site.Protocol))
-            //        {
-            //            // And if there are more than one value, or if the site has no subdomains
-            //            if (rootkey.ValueCount > 1 || string.IsNullOrEmpty(site.SubDomain))
-            //            {
-            //                // Delete only rootkey's protocol
-            //                rootkey.DeleteValue(valueName);
-            //            }
-            //            else
-            //            {
-            //                // Delete the rootkey. There are no subkeys and it contains only one value.
-            //                Domains.DeleteSubKey(site.RootDomain);
-            //            }
-            //        }
-            //    }
-            //}
-        //}
 
         public string[] QuerySites()
         {
