@@ -113,7 +113,7 @@ namespace Trustie.Models.InternetExplorer
         /// <summary>
         /// Queries registry for sites. Composes keys, subkeys and their values to rootdomains, subdomains and protocols.
         /// </summary>
-        /// <returns>Array if site strings</returns>
+        /// <returns>Array of sites</returns>
         public string[] QuerySites()
         {
             // Define a list of sites

@@ -60,7 +60,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Views\Images\shield.ico</ApplicationIcon>
+    <ApplicationIcon>Images\shield.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>22CFF5AF4FB1E3128F60298CFB8AD5D55636EA1A</ManifestCertificateThumbprint>
@@ -78,6 +78,12 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AdonisUI, Version=1.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\AdonisUI.1.13.0\lib\net45\AdonisUI.dll</HintPath>
+    </Reference>
+    <Reference Include="AdonisUI.ClassicTheme, Version=1.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\AdonisUI.ClassicTheme.1.13.0\lib\net45\AdonisUI.ClassicTheme.dll</HintPath>
+    </Reference>
     <Reference Include="Caliburn.Micro.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
       <HintPath>packages\Caliburn.Micro.Core.4.0.62-alpha\lib\net45\Caliburn.Micro.Core.dll</HintPath>
     </Reference>
@@ -172,7 +178,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Views\Images\shield.ico" />
+    <Resource Include="Images\shield.ico" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

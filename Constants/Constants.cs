@@ -28,8 +28,8 @@ namespace Trustie
 
                 public static class Domains
                 {
-                    public static readonly string Default = InternetSettings.Default + @"ZoneMap\Domains\";
-                    public static readonly string Policies = InternetSettings.Policies + @"ZoneMap\Domains\";
+                    public static readonly string Default = Constants.Registry.InternetSettings.Default + @"ZoneMap\Domains\";
+                    public static readonly string Policies = Constants.Registry.InternetSettings.Policies + @"ZoneMap\Domains\";
                 }
             }
 

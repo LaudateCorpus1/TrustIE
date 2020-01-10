@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Management;
 using System.Security.Principal;
 
@@ -37,22 +38,10 @@ namespace Trustie.Models.System.Users
         /// <returns>Current user name</returns>
         private static string CurrentUserName()
         {
-            SelectQuery query = new SelectQuery(@"Select * from Win32_Process");
-            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
-            {
-                foreach (ManagementObject Process in searcher.Get())
-                {
-                    if (Process["ExecutablePath"] != null &&
-                        string.Equals(Path.GetFileName(Process["ExecutablePath"].ToString()), "explorer.exe", StringComparison.OrdinalIgnoreCase))
-                    {
-                        string[] OwnerInfo = new string[2];
-                        Process.InvokeMethod("GetOwner", OwnerInfo);
-
-                        return OwnerInfo[0];
-                    }
-                }
-            }
-            return string.Empty;
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
+            ManagementObjectCollection collection = searcher.Get();
+            string username = (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
+            return username.Split('\\')[1];
         }
 
         /// <summary>
